@@ -1,35 +1,65 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from 'react';
+import './App.scss';
+import Game from './components/Game';
+import Result from './components/Result';
+
+const questions = [
+  {
+    title: 'React - это ... ?',
+    variants: ['библиотека', 'фреймворк', 'приложение'],
+    correct: 0,
+  },
+  {
+    title: 'Компонент - это ... ',
+    variants: [
+      'приложение',
+      'часть приложения или страницы',
+      'то, что я не знаю что такое',
+    ],
+    correct: 1,
+  },
+  {
+    title: 'Что такое JSX?',
+    variants: [
+      'Это простой HTML',
+      'Это функция',
+      'Это тот же HTML, но с возможностью выполнять JS-код',
+    ],
+    correct: 2,
+  },
+];
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [step, setStep] = useState(0);
+  const [numberOfCorrectAnswers, setNumberOfCorrectAnswers] = useState(0);
+  const question = questions[step];
+  const amountOfQuestions = questions.length;
+  const isStillPlaying = step !== questions.length;
+
+  const onVarianClickHandler = (index) => {
+    setStep(step + 1);
+    if (index === question.correct) {
+      setNumberOfCorrectAnswers(numberOfCorrectAnswers + 1);
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div className="App">
+      {isStillPlaying ? (
+        <Game
+          step={step}
+          question={question}
+          amountOfQuestions={amountOfQuestions}
+          onVarianClickHandler={onVarianClickHandler}
+        />
+      ) : (
+        <Result
+          numberOfCorrectAnswers={numberOfCorrectAnswers}
+          amountOfQuestions={amountOfQuestions}
+        />
+      )}
+    </div>
+  );
 }
 
-export default App
+export default App;
