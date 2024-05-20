@@ -1,34 +1,59 @@
-import { useState } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
+import { useEffect, useState } from 'react';
 import './App.scss';
+import { Success } from './components/Success';
+import { Users } from './components/Users';
+
+const API_BASEURL = 'https://reqres.in/api/users';
 
 function App() {
-  const [count, setCount] = useState(0);
+  const [users, setUsers] = useState([]);
+  const [invitedUsers, setInvitedUsers] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
+  const searchInputHandler = (event) => {
+    setSearchValue(event.target.value);
+  };
+
+  const onActionIconClickHandler = (id) => {
+    if (invitedUsers.includes(id)) {
+      setInvitedUsers((prev) => prev.filter((_id) => _id !== id));
+    } else setInvitedUsers((prev) => [...prev, id]);
+  };
+
+  const onSendInviteClickHandler = () => {
+    setIsSuccess(true);
+  };
+
+  useEffect(() => {
+    fetch(API_BASEURL)
+      .then((res) => res.json())
+      .then((json) => setUsers(json.data))
+      .catch((err) => {
+        console.error('Error during users fetching', err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }, []);
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App">
+      {isSuccess ? (
+        <Success count={invitedUsers.length} />
+      ) : (
+        <Users
+          searchValue={searchValue}
+          searchInputHandler={searchInputHandler}
+          users={users}
+          isLoading={isLoading}
+          invitedUsers={invitedUsers}
+          onActionIconClickHandler={onActionIconClickHandler}
+          onSendInviteClickHandler={onSendInviteClickHandler}
+        />
+      )}
+    </div>
   );
 }
 
