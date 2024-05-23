@@ -1,8 +1,19 @@
-# React + Vite
+# Currency Converter
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+В useEffect делаем запрос на https://www.cbr-xml-daily.ru/latest.js и обновляем стейт со ВСЕМИ курсами.
 
-Currently, two official plugins are available:
+Далее setFromCurrency (и setToCurrency) и соотв. стейты для сохранения значений КОНКРЕТНОЙ валюты в блоке.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Передаём функцию смены валюты onChangeCurrency(), куда просто передаём setTo/FromCurrency.  
+` <Block onChangeCurrency={setFromCurrency}`
+
+В Block вызов при клике на валюту меняем стейт валюты.  
+`<li onClick={() => onChangeCurrency(cur)} ... `
+
+Дальше делаем состояние инпута кол-ва денег контролируемым.
+
+Потом пишем функцию вычисления курсов.
+
+Пишем useEffect для реакцию на смену валюты при НЕ смене кол-ва.
+
+Переписываем хранение exchangeRates с useState на useRef (?). (Насколько это правомочно?)
